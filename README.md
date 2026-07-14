@@ -3,6 +3,7 @@
 > **Job board platform for tech professionals connecting top talent with high-impact software engineering roles.**
 
 [![JavaScript](https://img.shields.io/badge/JavaScript-ESNext-yellow?style=flat-square&logo=javascript)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)](https://github.com/kreftamarcio/q1jobs/actions)
 [![SaaS Platform](https://img.shields.io/badge/Platform-SaaS-purple?style=flat-square)](https://github.com/kreftamarcio/q1jobs)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
@@ -11,6 +12,22 @@
 ## Overview
 
 Q1 Jobs is a focused recruitment and career marketplace engineered for software developers, product managers, and UI/UX designers. It delivers an intuitive, fast applicant tracking experience with dynamic filtering by technical stack (`TypeScript`, `React`, `Python`, `Go`), remote work eligibility, and compensation brackets.
+
+## Applicant Tracking & Search Architecture
+
+```mermaid
+graph TD
+    Candidate["Software Engineer Candidate"] -->|Search by Stack / Salary / Remote| UI["Frontend Filter Engine"]
+    UI -->|Query Match| Data["Static / REST JSON Data Layer (`data/`)"]
+    
+    subgraph "Applicant Tracking System Pipeline"
+        UI -->|Apply to Opportunity| ATS["Candidate Application Ingestor"]
+        ATS -->|Attachment & Profile Parsing| Parse["Resume Validation (`src/`)"]
+        Parse -->|Notify HR / Recruiter| Recruiter["Recruiter Dashboard Dashboard"]
+    end
+    
+    Recruiter -->|Schedule Technical Screen| Candidate
+```
 
 ## Features
 
@@ -41,6 +58,7 @@ Q1 Jobs is a focused recruitment and career marketplace engineered for software 
 ```bash
 git clone https://github.com/kreftamarcio/q1jobs.git
 cd q1jobs
+npm install
 ```
 
 ### Environment variables
@@ -84,10 +102,14 @@ npm test
 
 ```text
 q1jobs/
-├── assets/          # Stylesheets, icons, and company logo placeholders
-├── scripts/         # Core application logic, search filtering, and DOM manipulation
-├── data/            # Mock job listings and candidate schemas
-└── index.html       # Main application entry layout
+├── .github/
+│   └── workflows/       # Automated static asset syntax verification CI
+├── archive/             # Historical zip distribution archives
+├── aws/                 # Cloud infrastructure & deployment manifests
+├── data/                # Mock job listings and candidate schemas
+├── public/              # Static media and public stylesheets
+├── src/                 # Core application logic, search filtering, and ATS pipelines
+└── test/                # Local test suites and validation scripts
 ```
 
 ## Roadmap
@@ -98,11 +120,7 @@ q1jobs/
 
 ## Contributing
 
-1. Fork the project.
-2. Create your feature branch (`git checkout -b feature/job-filtering`).
-3. Commit your changes (`git commit -m 'feat: improve job filtering'`).
-4. Push to the branch (`git push origin feature/job-filtering`).
-5. Open a Pull Request.
+Please review our [CONTRIBUTING.md](CONTRIBUTING.md) guide before opening Pull Requests.
 
 ## License
 

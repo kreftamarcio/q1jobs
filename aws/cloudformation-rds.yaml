@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Recrutador - PostgreSQL RDS para banco de vagas'
+
+Parameters:
+  DBPassword:
+    Type: String
+    NoEcho: true
+    MinLength: 8
+    Description: Senha do banco de dados (mínimo 8 caracteres)
+  
+  Environment:
+    Type: String
+    Default: production
+    AllowedValues: [production, staging]
+
+Resources:
+  RecrutadorVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: recrutador-vpc
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref RecrutadorVPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref RecrutadorVPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [1, !GetAZs '']
+      MapPublicIpOnLaunch: true
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnets para o RDS
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Acesso ao PostgreSQL
+      VpcId: !Ref RecrutadorVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: 0.0.0.0/0  # ⚠️ Em produção, restringir ao IP do seu app!
+
+  RecrutadorDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: recrutador-db
+      Engine: postgres
+      EngineVersion: '16.3'
+      DBInstanceClass: db.t3.micro  # Free tier eligible
+      AllocatedStorage: 20
+      StorageType: gp3
+      DBName: recrutador
+      MasterUsername: admin
+      MasterUserPassword: !Ref DBPassword
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !GetAtt DBSecurityGroup.GroupId
+      PubliclyAccessible: true
+      BackupRetentionPeriod: 7
+      MultiAZ: false
+      DeletionProtection: false
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+
+Outputs:
+  DBEndpoint:
+    Description: Endpoint do banco de dados
+    Value: !GetAtt RecrutadorDB.Endpoint.Address
+  
+  DBPort:
+    Description: Porta do banco
+    Value: !GetAtt RecrutadorDB.Endpoint.Port
+
+  ConnectionString:
+    Description: Use isso no seu .env
+    Value: !Sub 'postgresql://admin:${DBPassword}@${RecrutadorDB.Endpoint.Address}:${RecrutadorDB.Endpoint.Port}/recrutador'

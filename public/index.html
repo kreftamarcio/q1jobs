@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q1Jobs — Plataforma Global de Vagas Tech & Remote</title>
+    <meta name="description" content="Q1Jobs: Agregador inteligente de vagas de tecnologia e trabalho remoto. Vagas de 10+ países, atualizadas em tempo real.">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <img src="/img/logo.svg" alt="Q1Jobs" class="logo-img">
+                </a>
+                <nav class="nav">
+                    <a href="/" class="nav-link active" data-view="jobs">Vagas</a>
+                    <a href="#" class="nav-link" data-view="companies" onclick="showCompanies(event)">Empresas</a>
+                    <a href="#" class="nav-link" data-view="stats" onclick="showStats(event)">Dashboard</a>
+                </nav>
+                <div class="header-actions">
+                    <div class="live-counter">
+                        <span class="pulse"></span>
+                        <span id="header-count">0</span> vagas ativas
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" id="hero-section">
+        <div class="hero-bg"></div>
+        <div class="container">
+            <div class="hero-badges">
+                <span class="hero-badge">🌍 10+ Países</span>
+                <span class="hero-badge">🏠 100% Remote</span>
+                <span class="hero-badge">🤖 AI & Tech</span>
+                <span class="hero-badge">⚡ Atualização em Tempo Real</span>
+            </div>
+            <h1>Vagas <span class="gradient-text">Tech & Remote</span> do mundo inteiro</h1>
+            <p class="hero-subtitle"><strong>Q1Jobs</strong> agrega vagas de <strong>6 plataformas globais</strong> em um só lugar. Encontre sua próxima oportunidade remota em segundos.</p>
+            
+            <div class="search-box">
+                <div class="search-row">
+                    <div class="search-field search-main">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <input type="text" id="search-query" placeholder="Cargo, tecnologia ou empresa..." aria-label="Buscar vagas">
+                    </div>
+                    <div class="search-field search-loc">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <input type="text" id="search-location" placeholder="País ou cidade..." aria-label="Localização">
+                    </div>
+                    <button class="btn btn-primary btn-search" onclick="searchJobs()" aria-label="Buscar">
+                        Buscar Vagas
+                    </button>
+                </div>
+                <div class="search-suggestions">
+                    <span class="suggestion" onclick="quickSearch('remote developer')">remote developer</span>
+                    <span class="suggestion" onclick="quickSearch('machine learning')">machine learning</span>
+                    <span class="suggestion" onclick="quickSearch('react')">react</span>
+                    <span class="suggestion" onclick="quickSearch('python')">python</span>
+                    <span class="suggestion" onclick="quickSearch('devops')">devops</span>
+                    <span class="suggestion" onclick="quickSearch('AI engineer')">AI engineer</span>
+                    <span class="suggestion" onclick="quickSearch('fullstack')">fullstack</span>
+                </div>
+            </div>
+
+            <!-- Stats row -->
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-stat-number" id="stat-jobs">0</span>
+                    <span class="hero-stat-label">Vagas Ativas</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number" id="stat-companies">0</span>
+                    <span class="hero-stat-label">Empresas</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number" id="stat-remote">0</span>
+                    <span class="hero-stat-label">Vagas Remotas</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number" id="stat-sources">6</span>
+                    <span class="hero-stat-label">Fontes Globais</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filtros -->
+    <section class="filters-section" id="filters-section">
+        <div class="container">
+            <div class="filters-bar">
+                <div class="filter-chips">
+                    <button class="chip chip-active" onclick="filterRemote('')">Todas</button>
+                    <button class="chip" onclick="filterRemote('remote')">🏠 Remotas</button>
+                    <button class="chip" onclick="filterRemote('hybrid')">🔀 Híbridas</button>
+                    <button class="chip" onclick="filterRemote('onsite')">🏢 Presenciais</button>
+                </div>
+                <div class="filter-selects">
+                    <select id="filter-job-type" onchange="searchJobs()" aria-label="Tipo de contrato">
+                        <option value="">Contrato</option>
+                        <option value="full-time">Full-time</option>
+                        <option value="part-time">Part-time</option>
+                        <option value="contract">Contrato</option>
+                        <option value="freelance">Freelance</option>
+                    </select>
+                    <select id="filter-source" onchange="searchJobs()" aria-label="Fonte">
+                        <option value="">Fonte</option>
+                        <option value="remoteok">RemoteOK</option>
+                        <option value="arbeitnow">Arbeitnow</option>
+                        <option value="muse">The Muse</option>
+                        <option value="adzuna">Adzuna</option>
+                        <option value="jooble">Jooble</option>
+                        <option value="reed">Reed</option>
+                    </select>
+                    <select id="sort-by" onchange="searchJobs()" aria-label="Ordenar">
+                        <option value="published_at">Mais recentes</option>
+                        <option value="salary_max">Maior salário</option>
+                        <option value="title">Título A-Z</option>
+                    </select>
+                    <button class="btn-clear" onclick="clearFilters()">✕ Limpar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hidden filter state -->
+    <input type="hidden" id="filter-type" value="">
+
+    <!-- Main -->
+    <main class="main-content">
+        <div class="container">
+            <div class="results-header" id="results-header">
+                <p id="results-count" class="results-count"></p>
+            </div>
+
+            <div id="jobs-list" class="jobs-list"></div>
+            <div id="pagination" class="pagination"></div>
+
+            <div id="companies-section" class="hidden">
+                <h2 class="section-title">Empresas Contratando</h2>
+                <div id="companies-list" class="companies-grid"></div>
+            </div>
+
+            <div id="stats-section" class="hidden">
+                <h2 class="section-title">Dashboard em Tempo Real</h2>
+                <div id="stats-content" class="stats-grid"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="job-modal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()" aria-label="Fechar">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <img src="/img/logo.svg" alt="Q1Jobs" class="logo-img">
+                    </div>
+                    <p>Plataforma global de agregação de vagas tech e remote. Dados de 6 fontes, 10+ países, atualizados em tempo real.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Fontes</h4>
+                    <ul>
+                        <li>Adzuna (BR, US, UK, DE, +6)</li>
+                        <li>RemoteOK</li>
+                        <li>Arbeitnow</li>
+                        <li>The Muse</li>
+                        <li>Jooble</li>
+                        <li>Reed</li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Tecnologias</h4>
+                    <ul>
+                        <li>Node.js + Express</li>
+                        <li>PostgreSQL (Supabase)</li>
+                        <li>API REST</li>
+                        <li>Real-time Updates</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Q1Jobs. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" crossorigin="anonymous"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

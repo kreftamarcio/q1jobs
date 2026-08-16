@@ -1,8 +1,15 @@
-# Contributing to Q1 Jobs Career Board
+# Contributing
 
-We welcome improvements to our applicant tracking pipeline and technical filtering modules!
+Thank you for your interest in contributing! Here's how you can help.
 
-## Development Checklist
-1. All DOM manipulation scripts must maintain responsive behavior on mobile viewports.
-2. Ensure new job listing fixtures (`data/`) follow standard JSON formatting.
-3. Run local static tests (`test/`) before submitting your Pull Request.
+## Development Workflow
+1. Fork the repository
+2. Create a feature branch: git checkout -b feature/amazing-feature
+3. Commit your changes using Conventional Commits
+4. Push to the branch
+5. Open a Pull Request
+
+## Code Quality
+- All PRs must pass the CI pipeline.
+- Maintain test coverage for new features.
+- Follow the existing code style (TypeScript strict mode).

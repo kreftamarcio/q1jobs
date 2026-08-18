@@ -2,18 +2,16 @@
 
 ## Agora
 
-- Fatia 0: spec gravada neste branch. Aguardando você fechar INCERTOS em SPEC.md.
+- Fatia 0–2 no branch `feat/slice-0-aggregator-spec`.
+- `security.yml` sem gitleaks-action.
+- `ci.yml` Node 22/24 + checkout@v5.
 
 ## Feito
 
-- Branch `feat/slice-0-aggregator-spec` criado de `main` (sha base fd6f4e60).
-- Árvore confirmada: 15 providers, 3 rotas API, supabase/schema, 1 teste sentinel.
+- SPEC, CLAUDE, TRACKS, INVENTORY.
+- `src/lib/normalizeJob.js` + `test/normalizeJob.test.js`.
+- Fix CI Gitleaks (commit 720d7cf).
 
-## Bloqueado
+## Próximo
 
-- Fatias 1–8 até INCERTOS marcados.
-- Clinic / Agents / Platform: ver TRACKS.md. Sem código paralelo.
-
-## Próximo comando quando INCERTOS fecharem
-
-Fatia 1: ler `package.json`, `src/database/schema.sql`, `src/server.js`, `src/api/routes/jobs.js` e gravar `INVENTORY.md` só com o que estiver no arquivo.
+Fatia 3: teste de dedup `source+external_id`. Não ligar mapper nos 15 providers até esse teste existir.

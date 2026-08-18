@@ -8,16 +8,50 @@ on:
   schedule:
     - cron: '0 0 * * 0' # Weekly
 
+permissions:
+  contents: read
+
 jobs:
   audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
       - name: NPM Audit
         run: npm audit --audit-level=high || echo "Audit completed (ignoring errors for CI stability)"
+
+      - name: Install Gitleaks
+        run: |
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz" \
+            | tar -xz -C /usr/local/bin gitleaks
+          gitleaks version
+
       - name: Gitleaks (Secret Scanner)
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if git rev-parse --verify --quiet HEAD^ >/dev/null; then
+            gitleaks detect --redact -v --exit-code=1 \
+              --report-format=sarif --report-path=results.sarif \
+              --log-opts="--no-merges --first-parent HEAD^..HEAD"
+          else
+            echo "Parent commit missing; scanning working tree without git range"
+            gitleaks detect --redact -v --exit-code=1 \
+              --report-format=sarif --report-path=results.sarif \
+              --no-git --source .
+          fi
+
+      - name: Upload Gitleaks SARIF
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: gitleaks-results.sarif
+          path: results.sarif
+          if-no-files-found: ignore
